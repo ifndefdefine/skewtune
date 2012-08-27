@@ -1,0 +1,46 @@
+<project name="skewtune" xmlns:ivy="antlib:org.apache.ivy.ant" default="jar" basedir=".">
+    <!-- properties -->
+    <property name="builddir"      location="./build" />
+    <property name="docdir"      location="./doc" />
+    <property name="src" location="./src" />
+    <property name="logging.props" value="./logging.properties" />
+
+    <path id="lib.path.ref">
+        <pathelement location="${builddir}" />
+         <fileset dir="lib">
+             <include name="*.jar" />
+         </fileset>
+    </path>
+
+    <target name="compile">
+        <mkdir dir="${builddir}" />
+        <javac
+            target="1.6" 
+            srcdir="${src}" destdir="${builddir}"
+            includeAntRuntime="false"
+            classpathref="lib.path.ref" debug="true">
+            <include name="**/*.java" />
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <copy todir="${builddir}" preservelastmodified="true">
+            <fileset file="${src}/skewtune-default.xml" />
+            <fileset file="${src}/primenumbers.bin" />
+        </copy>
+        <jar destfile="hadoop-mapred-0.21.0-SKEWTUNE.jar">
+            <zipfileset src="lib/hadoop-mapred-0.21.0.jar" />
+            <fileset dir="${builddir}" includes="**/*.class" />
+        </jar>
+        <jar destfile="skewtune-rt.jar">
+            <fileset dir="${builddir}" includes="**/*.class" />
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="${builddir}" />
+        <delete file="hadoop-mapred-0.21.0-SKEWTUNE.jar" />
+        <delete file="skewtune-rt.jar" />
+    </target>
+
+</project>
