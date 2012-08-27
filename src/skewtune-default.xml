@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>skewtune.jobtracker.address</name>
+        <value>0.0.0.0:60000</value>
+    </property>
+    <property>
+        <name>skewtune.jobtracker.http.address</name>
+        <value>0.0.0.0:60050</value>
+    </property>
+
+    <property>
+        <name>skewtune.jobtracker.handler.count</name>
+        <value>40</value>
+    </property>
+     <property>
+        <name>skewtune.tasktracker.report.address</name>
+        <value>127.0.0.1:60100</value>
+    </property>
+</configuration>
