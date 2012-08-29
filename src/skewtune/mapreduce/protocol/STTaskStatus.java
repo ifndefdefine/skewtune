@@ -17,7 +17,7 @@ import org.apache.hadoop.mapreduce.TaskType;
 import skewtune.mapreduce.MapOutputStat;
 import skewtune.mapreduce.TaskProgress;
 
-public class SRTaskStatus implements Writable, Cloneable {
+public class STTaskStatus implements Writable, Cloneable {
     private final TaskAttemptID taskid;
     private volatile TaskStatus.Phase phase = TaskStatus.Phase.STARTING;
     private volatile TaskStatus.State runState = TaskStatus.State.RUNNING;
@@ -40,15 +40,15 @@ public class SRTaskStatus implements Writable, Cloneable {
     private volatile MapOutputIndex index; // map output index. only assigned when it is reactive map task.
     private volatile TaskCostReport costReport; // cost report. sent every minute and when task completes
 
-    public SRTaskStatus() {
+    public STTaskStatus() {
         this.taskid = new TaskAttemptID();
     }
 
-    public SRTaskStatus(TaskAttemptID id) {
+    public STTaskStatus(TaskAttemptID id) {
         this.taskid = id;
     }
 
-//    public SRTaskStatus(TaskAttemptID id,float progress,MapOutputStat stat) {
+//    public STTaskStatus(TaskAttemptID id,float progress,MapOutputStat stat) {
 //        this.taskid = id;
 //        this.progress = progress;
 //        this.stat = stat;
@@ -169,7 +169,7 @@ public class SRTaskStatus implements Writable, Cloneable {
     */
     
     
-    public synchronized void statusUpdate(SRTaskStatus status) {
+    public synchronized void statusUpdate(STTaskStatus status) {
         if ( ! this.taskid.equals(status.taskid) ) {
             throw new IllegalArgumentException();
         }
@@ -305,15 +305,15 @@ public class SRTaskStatus implements Writable, Cloneable {
     @Override
     public boolean equals(Object o) {
         if ( this == o ) return true;
-        if ( o instanceof SRTaskStatus ) {
-            return taskid.equals(((SRTaskStatus)o).taskid);
+        if ( o instanceof STTaskStatus ) {
+            return taskid.equals(((STTaskStatus)o).taskid);
         }
         return false;
     }
     
     public static void main(String[] args) throws Exception {
         DataInputStream input = new DataInputStream(new FileInputStream(args[0]));
-        SRTaskStatus status = new SRTaskStatus();
+        STTaskStatus status = new STTaskStatus();
         status.readFields(input);
         input.close();
     }
