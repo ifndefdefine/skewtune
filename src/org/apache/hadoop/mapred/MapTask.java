@@ -86,10 +86,8 @@ import org.apache.hadoop.util.QuickSort;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.hadoop.util.StringUtils;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
-
 import skewtune.mapreduce.SkewTuneJobConfig;
-import skewtune.mapreduce.protocol.SRTaskStatus;
+import skewtune.mapreduce.protocol.STTaskStatus;
 import skewtune.mapreduce.protocol.SkewTuneTaskUmbilicalProtocol;
 
 /** A Map task. */
@@ -412,7 +410,7 @@ class MapTask extends Task {
             // okay, time to enable monitoring
             try {
                 srumbilical.init(getTaskID(), job.getNumMapTasks(),job.getNumReduceTasks());
-                this.srTaskStatus = new SRTaskStatus(this.getTaskID());
+                this.srTaskStatus = new STTaskStatus(this.getTaskID());
 //                srTaskStatus.setStartTime(System.currentTimeMillis());
 //                myProgress = new TaskProgress.MapProgress(job, counters, taskStatus, mapPhase, sortPhase);
                 reportSkewReduce = true;
@@ -2360,44 +2358,6 @@ class MapTask extends Task {
     // SKEWREDUCE
     InputSplit getInputSplit(final TaskSplitIndex splitIndex) throws NullPointerException, HttpException, IOException, InterruptedException, ClassNotFoundException {
         InputSplit inputSplit = null;
-        
-        /*
-        if ( conf.getBoolean(SkewTuneJobConfig.SKEWTUNE_REACTIVE_JOB, false) ) {
-            String orgTaskIDstr = conf.get(SkewTuneJobConfig.ORIGINAL_TASK_ID_ATTR);
-            TaskID orgTaskID = TaskID.forName(orgTaskIDstr);
-            if ( orgTaskID.getTaskType() == TaskType.MAP ) {
-                if ( conf.getBoolean(SkewTuneJobConfig.ENABLE_SKEWTUNE_TAKEOVER_MAP, false) ) {
-                    byte[] split = retrieveSplitInformation(orgTaskID);
-                    // now construct input split from this
-                    DataInputBuffer inBuf = new DataInputBuffer();
-                    inBuf.reset(split, split.length);
-                    String splitClass = inBuf.readUTF();
-                    if ( LOG.isDebugEnabled() ) {
-                        LOG.debug("received bytes = "+split.length);
-                        LOG.debug("received split class = "+splitClass);
-                    }
-                    inputSplit = (InputSplit)ReflectionUtils.newInstance(conf.getClassByName(splitClass), conf);
-                    inputSplit.readFields(inBuf);
-                    if ( LOG.isDebugEnabled() ) {
-                        LOG.debug("received split = "+inputSplit);
-                    }
-                } // otherwise, use default
-            } else {
-                if ( conf.getBoolean(SkewTuneJobConfig.ENABLE_SKEWTUNE_REDUCE, false) ) {
-                    // should contact the task tracker HTTP
-                    byte[] resp = retrieveSplitInformation(orgTaskID);
-                    String encodedMinKey = Base64.encode(resp);
-                    
-                    if ( LOG.isDebugEnabled() ) {
-                        LOG.debug("received min key bytes = "+resp.length);
-                        LOG.debug("base64 encoded key = "+encodedMinKey);
-                    }
-                    conf.set(SkewTuneJobConfig.REACTIVE_REDUCE_MIN_KEY, encodedMinKey);
-                    
-                } // use default
-            }
-        }
-        */
         
         if ( inputSplit == null ) {
             inputSplit = getSplitDetails(

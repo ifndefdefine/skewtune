@@ -66,7 +66,7 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
 
 import skewtune.mapreduce.SkewTuneJobConfig;
-import skewtune.mapreduce.protocol.SRTaskStatus;
+import skewtune.mapreduce.protocol.STTaskStatus;
 import skewtune.mapreduce.protocol.SkewTuneTaskUmbilicalProtocol;
 import skewtune.utils.LoadGen;
 
@@ -458,7 +458,7 @@ public class ReduceTask extends Task {
         // okay, time to enable monitoring
         try {
             srumbilical.init(getTaskID(),job.getNumMapTasks(), job.getNumReduceTasks());
-            this.srTaskStatus = new SRTaskStatus(this.getTaskID());
+            this.srTaskStatus = new STTaskStatus(this.getTaskID());
 //            myProgress = new TaskProgress.ReduceProgress(job, reporter, taskStatus, copyPhase, sortPhase);
 //            srTaskStatus.setStartTime(System.currentTimeMillis());
             reportSkewReduce = true;

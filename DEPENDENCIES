@@ -1,6 +1,14 @@
-Current SkewTune depends on following packages. All dependent packages are bundled in the lib directory.
+Current SkewTune depends on following packages. All dependent packages are
+bundled in the lib directory.
 
 * Hadoop 0.21.0
-(Not tested with other versions. Integration with 0.20.203 was attempted but did not work due to race condition during the output commit).
+
+http://hadoop.apache.org/
+
+(Not tested with other versions. Integration with 0.20.203 was attempted but
+did not work due to the race condition problem during the output commit).
 
 * Apache Commons Math >= 2.2
+
+http://commons.apache.org/math/
+

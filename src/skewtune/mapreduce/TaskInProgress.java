@@ -29,7 +29,7 @@ import org.apache.hadoop.mapreduce.split.JobSplit.TaskSplitIndex;
 import org.apache.hadoop.mapreduce.split.JobSplit.TaskSplitMetaInfo;
 
 import skewtune.mapreduce.JobInProgress.JobType;
-import skewtune.mapreduce.protocol.SRTaskStatus;
+import skewtune.mapreduce.protocol.STTaskStatus;
 import skewtune.mapreduce.protocol.TaskAction;
 import skewtune.utils.Average;
 
@@ -53,7 +53,7 @@ class TaskInProgress {
     
     // taskattempt to tracker
     TreeMap<TaskAttemptID,String> taskid2tracker = new TreeMap<TaskAttemptID,String>();
-    TreeMap<TaskAttemptID,SRTaskStatus> taskStatus = new TreeMap<TaskAttemptID,SRTaskStatus>();
+    TreeMap<TaskAttemptID,STTaskStatus> taskStatus = new TreeMap<TaskAttemptID,STTaskStatus>();
     TreeMap<TaskAttemptID,Integer> actions = new TreeMap<TaskAttemptID,Integer>();
     
     TaskAttemptID taskCommitted; // or where the output available
@@ -101,7 +101,7 @@ class TaskInProgress {
     TaskType getType() { return tid.getTaskType(); }
     int getPartition() { return tid.getId(); }
     
-    public synchronized boolean setStatus(SRTaskStatus status, String host) {
+    public synchronized boolean setStatus(STTaskStatus status, String host) {
         // FIXME update map output statistics if it has
         // FIXME update statistics
         
@@ -206,7 +206,7 @@ class TaskInProgress {
         return mapOutputIndex;
     }
 
-    public synchronized void getAllTaskStatus(List<SRTaskStatus> cache,long now) {
+    public synchronized void getAllTaskStatus(List<STTaskStatus> cache,long now) {
         if ( this.taskCommitted == null && this.reactiveJob == null ) {
             // extrac check for map
             if ( tid.getTaskType() == TaskType.MAP
@@ -223,9 +223,9 @@ class TaskInProgress {
             }
             
             // either reduce or has not set, otherwise, at least splittable more than two
-            SRTaskStatus best = null;
+            STTaskStatus best = null;
             double bestTime = Double.MAX_VALUE;
-            for ( SRTaskStatus status : taskStatus.values() ) {
+            for ( STTaskStatus status : taskStatus.values() ) {
                 if ( status.getTimePassed(now) > 60.
                         && status.getRemainTimeAt() > 0
                         && status.getRunState() == TaskStatus.State.RUNNING ) {
@@ -366,14 +366,14 @@ class TaskInProgress {
      * @return <code>null</code> if only speculative execution makes sense.
      */
     public synchronized TaskAttemptWithHost getSplittableTask() {
-        SRTaskStatus best = null;
+        STTaskStatus best = null;
         float bestProgress = Float.MIN_VALUE;
         TaskAttemptWithHost ret = null;
         
         if ( state == TaskState.RUNNING ) {
             if ( tid.getTaskType() == TaskType.MAP ) {
                 // taskattempts which is in MAP phase and the most progressed one
-                for ( SRTaskStatus status : taskStatus.values() ) {
+                for ( STTaskStatus status : taskStatus.values() ) {
                     if ( status.getPhase() == Phase.MAP && status.getProgress() > bestProgress ) {
                         best = status;
                     }
@@ -381,7 +381,7 @@ class TaskInProgress {
             } else {
                 int bestPhase = -1;
                 // taskattempts which already started reduce
-                for ( SRTaskStatus status : taskStatus.values() ) {
+                for ( STTaskStatus status : taskStatus.values() ) {
                     // reduce can stop anywhere.
                     // come up with best by comparing phase and progress
                     /*
@@ -421,14 +421,14 @@ class TaskInProgress {
     }
     
     public synchronized double getRemainingTime(TaskAttemptID taskid,long now) {
-        SRTaskStatus status = taskStatus.get(taskid);
+        STTaskStatus status = taskStatus.get(taskid);
         if ( status == null || status.getRunState() != TaskStatus.State.RUNNING ) {
             return 0.; // assuming completed?
         }
         return Math.max(status.getRemainTime(now),0.);
     }
     public synchronized void getTimePerByte(Average avg) {
-        for ( SRTaskStatus status : taskStatus.values() ) {
+        for ( STTaskStatus status : taskStatus.values() ) {
             float v = status.getTimePerByte();
             if ( v > 0. ) avg.add(v);
         }

@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.hadoop.mapred.TaskAttemptID;
 
 import skewtune.mapreduce.protocol.MapOutputUpdates;
-import skewtune.mapreduce.protocol.SRTaskStatus;
+import skewtune.mapreduce.protocol.STTaskStatus;
 import skewtune.mapreduce.protocol.SkewTuneTaskUmbilicalProtocol;
 
 public class STTaskUmbilicalClient implements SkewTuneTaskUmbilicalProtocol {
@@ -32,7 +32,7 @@ public class STTaskUmbilicalClient implements SkewTuneTaskUmbilicalProtocol {
     }
 
     @Override
-    public int statusUpdate(TaskAttemptID taskid, SRTaskStatus status)
+    public int statusUpdate(TaskAttemptID taskid, STTaskStatus status)
             throws IOException {
         return 0;
     }

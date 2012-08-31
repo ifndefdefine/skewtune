@@ -89,7 +89,7 @@ public class SilentSkewTuneTaskUmbilicalProtocol implements
     }
 
     @Override
-    public int statusUpdate(TaskAttemptID taskId, SRTaskStatus status)
+    public int statusUpdate(TaskAttemptID taskId, STTaskStatus status)
             throws IOException {
 //        if ( ok.get() ) {
             try {

@@ -59,7 +59,7 @@ import skewtune.mapreduce.protocol.JobOnTaskTracker;
 import skewtune.mapreduce.protocol.MapOutputUpdates;
 import skewtune.mapreduce.protocol.NewMapOutput;
 import skewtune.mapreduce.protocol.ReactiveMapOutput;
-import skewtune.mapreduce.protocol.SRTaskStatus;
+import skewtune.mapreduce.protocol.STTaskStatus;
 import skewtune.mapreduce.protocol.SkewTuneTaskUmbilicalProtocol;
 import skewtune.mapreduce.protocol.SkewTuneTrackerProtocol;
 import skewtune.mapreduce.protocol.TaskAction;
@@ -639,7 +639,7 @@ public class STTaskTracker
       }
 
       List<JobOnTaskTracker> result = new ArrayList<JobOnTaskTracker>(rjobs.length);
-      List<SRTaskStatus> taskStatus = new ArrayList<SRTaskStatus>();
+      List<STTaskStatus> taskStatus = new ArrayList<STTaskStatus>();
       
       for ( RunningJob rjob : rjobs ) {
           int from = -1;
@@ -650,7 +650,7 @@ public class STTaskTracker
               from = rjob.getNumAvailMapOutput();
               fromTakeover = rjob.getCurrentIndexOfTakeoverMaps();
               for ( TaskInProgress tip : rjob ) {
-                  taskStatus.add( (SRTaskStatus)tip.getStatus().clone() );
+                  taskStatus.add( (STTaskStatus)tip.getStatus().clone() );
               }
           }
           
@@ -692,7 +692,7 @@ public static void main(String argv[]) throws Exception {
   
     class TaskInProgress {
         private final TaskAttemptID taskid;
-        private final SRTaskStatus taskStatus;
+        private final STTaskStatus taskStatus;
         private volatile long lastReport; // last call of statusUpdate()
         private volatile boolean done;    // set by RPC. cleared by heartbeat logic.
         private volatile boolean cancel;
@@ -701,7 +701,7 @@ public static void main(String argv[]) throws Exception {
 
         TaskInProgress(TaskAttemptID id) {
             this.taskid = id;
-            this.taskStatus = new SRTaskStatus(this.taskid);
+            this.taskStatus = new STTaskStatus(this.taskid);
         }
 
         boolean isMap() {
@@ -716,7 +716,7 @@ public static void main(String argv[]) throws Exception {
             return taskid;
         }
 
-        synchronized SRTaskStatus getStatus() {
+        synchronized STTaskStatus getStatus() {
             return taskStatus;
         }
         
@@ -739,7 +739,7 @@ public static void main(String argv[]) throws Exception {
         
         void cancel() { cancel = true; }
 
-        synchronized void reportProgress(SRTaskStatus status) {
+        synchronized void reportProgress(STTaskStatus status) {
             if ( this.done || 
                     this.taskStatus.getRunState() != TaskStatus.State.RUNNING ) {
                 LOG.info(taskid + " Ignoring status-update since " +
@@ -904,7 +904,7 @@ public static void main(String argv[]) throws Exception {
 
     @Override
     public synchronized int statusUpdate(
-            TaskAttemptID taskid, SRTaskStatus status)
+            TaskAttemptID taskid, STTaskStatus status)
     throws IOException {
         TaskInProgress tip = runningTasks.get(taskid);
         if ( tip != null ) {

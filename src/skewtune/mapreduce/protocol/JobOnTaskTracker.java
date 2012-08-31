@@ -16,9 +16,9 @@ public class JobOnTaskTracker implements Writable {
      */
     private int fromIndex = -1;
     private int fromIndexTakeOver = -1;
-    private static final SRTaskStatus[] EMPTY_STATUS = new SRTaskStatus[0];
+    private static final STTaskStatus[] EMPTY_STATUS = new STTaskStatus[0];
     
-    private SRTaskStatus[] tasks = EMPTY_STATUS; // tasks belong to this job
+    private STTaskStatus[] tasks = EMPTY_STATUS; // tasks belong to this job
     
     public JobOnTaskTracker() {
         this.jobid = new JobID();
@@ -29,16 +29,16 @@ public class JobOnTaskTracker implements Writable {
         this.fromIndex = from;
     }
     
-    public JobOnTaskTracker(JobID jobid,int from,Collection<SRTaskStatus> status) {
+    public JobOnTaskTracker(JobID jobid,int from,Collection<STTaskStatus> status) {
         this.jobid = jobid;
         this.fromIndex = from;
-        this.tasks = status.toArray(new SRTaskStatus[status.size()]);
+        this.tasks = status.toArray(new STTaskStatus[status.size()]);
     }
     
-    public JobOnTaskTracker(JobID jobid,int from,Collection<SRTaskStatus> status,int takeOverIndex) {
+    public JobOnTaskTracker(JobID jobid,int from,Collection<STTaskStatus> status,int takeOverIndex) {
         this.jobid = jobid;
         this.fromIndex = from;
-        this.tasks = status.toArray(new SRTaskStatus[status.size()]);
+        this.tasks = status.toArray(new STTaskStatus[status.size()]);
         this.fromIndexTakeOver = takeOverIndex;
     }
 
@@ -51,18 +51,18 @@ public class JobOnTaskTracker implements Writable {
     public void setFromIndexOfTakeOver(int i) { fromIndexTakeOver = i; }
     public boolean pollTakeOver() { return fromIndexTakeOver >= 0; }
     
-    public SRTaskStatus[] getTaskReports() { return tasks; }
-    public void setTaskReports(Collection<SRTaskStatus> x) {
-        tasks = x.toArray(new SRTaskStatus[x.size()]);
+    public STTaskStatus[] getTaskReports() { return tasks; }
+    public void setTaskReports(Collection<STTaskStatus> x) {
+        tasks = x.toArray(new STTaskStatus[x.size()]);
     }
     
     @Override
     public void readFields(DataInput in) throws IOException {
         jobid.readFields(in);
         fromIndex = in.readInt();
-        tasks = new SRTaskStatus[in.readInt()];
+        tasks = new STTaskStatus[in.readInt()];
         for ( int i = 0; i < tasks.length; ++i ) {
-            SRTaskStatus status = new SRTaskStatus();
+            STTaskStatus status = new STTaskStatus();
             status.readFields(in);
             tasks[i] = status;
         }
@@ -74,7 +74,7 @@ public class JobOnTaskTracker implements Writable {
         jobid.write(out);
         out.writeInt(fromIndex);
         out.writeInt(tasks.length);
-        for ( SRTaskStatus status : tasks ) {
+        for ( STTaskStatus status : tasks ) {
             status.write(out);
         }
         out.writeInt(fromIndexTakeOver);

@@ -110,7 +110,7 @@ import skewtune.mapreduce.lib.input.InputSplitCache;
 import skewtune.mapreduce.protocol.HeartbeatResponse;
 import skewtune.mapreduce.protocol.JobOnTaskTracker;
 import skewtune.mapreduce.protocol.ReactiveMapOutput;
-import skewtune.mapreduce.protocol.SRTaskStatus;
+import skewtune.mapreduce.protocol.STTaskStatus;
 import skewtune.mapreduce.protocol.SkewTuneClientProtocol;
 import skewtune.mapreduce.protocol.SkewTuneTrackerProtocol;
 import skewtune.mapreduce.protocol.TaskAction;
@@ -1068,7 +1068,7 @@ public class STJobTracker implements MRJobConfig, SkewTuneClientProtocol,
                     }
                     
                     // update statistics of this task
-                    for (SRTaskStatus taskStatus : jobReport.getTaskReports()) {
+                    for (STTaskStatus taskStatus : jobReport.getTaskReports()) {
                         int action = jip.handleTaskHeartbeat(taskStatus,status.getHostName(),completed);
                         if ( action != 0 ) {
                             taskActions.add(new TaskAction(taskStatus.getTaskID(),action));
@@ -1316,7 +1316,7 @@ public class STJobTracker implements MRJobConfig, SkewTuneClientProtocol,
             throw new IOException(msg);
         }
         
-        SRTaskStatus taskStatus = jip.findSpeculativeTask();
+        STTaskStatus taskStatus = jip.findSpeculativeTask();
         if ( taskStatus == null ) {
             LOG.debug("Nothing to speculate for "+jobid);
             return null;
@@ -2313,15 +2313,15 @@ public class STJobTracker implements MRJobConfig, SkewTuneClientProtocol,
             for ( JobInProgress jip : jobs ) {
                 if ( jip.doNotSpeculate ) continue;
                 
-//                List<SRTaskStatus> tips = jip.findSpeculativeTask(availMaps,availReduces);
-                List<SRTaskStatus> tips = jip.findSpeculativeTaskNew(availMaps,availReduces);
+//                List<STTaskStatus> tips = jip.findSpeculativeTask(availMaps,availReduces);
+                List<STTaskStatus> tips = jip.findSpeculativeTaskNew(availMaps,availReduces);
                 if ( LOG.isDebugEnabled() ) {
-                    for ( SRTaskStatus s : tips ) {
+                    for ( STTaskStatus s : tips ) {
                         LOG.debug(s+": remaining time = "+s.getRemainTime(now));
                     }
                 }
                 
-                for ( SRTaskStatus tip : tips ) {
+                for ( STTaskStatus tip : tips ) {
                     TaskID taskid = tip.getTaskID().getTaskID();
                     if ( ! candidates.contains(taskid) && ! jip.isRequired(taskid) ) {
                         LOG.info(taskid + " was not previously a candidate for speculative execution");

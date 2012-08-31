@@ -54,7 +54,7 @@ public interface SkewTuneTaskUmbilicalProtocol extends VersionedProtocol {
    * @return
    * @throws IOException
    */
-  int statusUpdate(TaskAttemptID taskid,SRTaskStatus status) throws IOException;
+  int statusUpdate(TaskAttemptID taskid,STTaskStatus status) throws IOException;
   
   void setSplitInfo(TaskAttemptID taskid,byte[] data) throws IOException;
   

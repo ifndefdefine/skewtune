@@ -204,7 +204,7 @@ abstract public class Task implements Writable, Configurable {
     // SKEWREDUCE SPECIFICS
     protected SkewTuneTaskUmbilicalProtocol srumbilical;
     protected volatile boolean reportSkewReduce;
-    protected skewtune.mapreduce.protocol.SRTaskStatus srTaskStatus;
+    protected skewtune.mapreduce.protocol.STTaskStatus srTaskStatus;
 //    protected SplitRemainingDataAction splitRemainAction;
     protected TellAndStopAction tellAndStopAction;
     protected StopStatus    stopStatus = StopStatus.RUNNING;

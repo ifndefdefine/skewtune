@@ -71,7 +71,7 @@ import skewtune.mapreduce.lib.input.MapOutputInputFormat;
 import skewtune.mapreduce.lib.input.MapOutputSplit;
 import skewtune.mapreduce.lib.input.MapOutputSplit.ReactiveOutputSplit;
 import skewtune.mapreduce.protocol.ReactiveMapOutput;
-import skewtune.mapreduce.protocol.SRTaskStatus;
+import skewtune.mapreduce.protocol.STTaskStatus;
 import skewtune.mapreduce.protocol.TaskStatusEvent;
 import skewtune.mapreduce.util.PrimeTable;
 import skewtune.utils.Average;
@@ -1908,7 +1908,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
         return new MapOutputSplitInfo(nfiles,ret);
     }
     
-    private synchronized void findSpeculativeTaskInReactiveJob(int availMaps,int availReduces,long now,List<SRTaskStatus> candidates) throws InterruptedException {
+    private synchronized void findSpeculativeTaskInReactiveJob(int availMaps,int availReduces,long now,List<STTaskStatus> candidates) throws InterruptedException {
         boolean speculateMap = availMaps > 0 && canSpeculateMapNew();
         boolean speculateReduce = availReduces > 0 && canSpeculateReduceNew();
         
@@ -1940,13 +1940,13 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
     }
     
 
-    public synchronized List<SRTaskStatus> findSpeculativeTaskNew(int availMaps,
+    public synchronized List<STTaskStatus> findSpeculativeTaskNew(int availMaps,
             int availReduces) throws InterruptedException {
         boolean speculateMap = availMaps > 0 && canSpeculateMapNew();
         boolean speculateReduce = availReduces > 0 && canSpeculateReduceNew();
 
         // if a speculative task is running, it must be all scheduled.
-        ArrayList<SRTaskStatus> candidates = new ArrayList<SRTaskStatus>(tasks.length * 2);
+        ArrayList<STTaskStatus> candidates = new ArrayList<STTaskStatus>(tasks.length * 2);
         final long now = System.currentTimeMillis();
 
         if (speculateMap) {
@@ -1977,7 +1977,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
         }
 
         // FIXME currently, take just one for map and another for reduce
-        ArrayList<SRTaskStatus> list = new ArrayList<SRTaskStatus>(2);
+        ArrayList<STTaskStatus> list = new ArrayList<STTaskStatus>(2);
         boolean foundMap = availMaps == 0; // otherwise, we do not have space
                                            // for a map
         boolean foundReduce = availReduces == 0; // otherwise we do not have
@@ -1985,7 +1985,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
 
         Collections.sort(candidates, new EstimatedTimeComparator(now));
 
-        for (SRTaskStatus candidate : candidates) {
+        for (STTaskStatus candidate : candidates) {
             if (candidate.getTaskID().getTaskType() == TaskType.MAP) {
                 if (!foundMap) {
                     list.add(candidate);
@@ -2003,7 +2003,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
         }
 
         if (LOG.isInfoEnabled()) {
-            for (SRTaskStatus target : list) {
+            for (STTaskStatus target : list) {
                 LOG.info("speculative execution candidate: "
                         + target.getTaskID().getTaskID() + " (expected "
                         + (target.getRemainTime(now)) + " secs)");
@@ -2016,7 +2016,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
 
 
 
-    public synchronized List<SRTaskStatus> findSpeculativeTask(int availMaps,
+    public synchronized List<STTaskStatus> findSpeculativeTask(int availMaps,
             int availReduces) throws InterruptedException {
         boolean speculateMap = availMaps > 0 && canSpeculateMapNew();
         boolean speculateReduce = availReduces > 0 && canSpeculateReduceNew();
@@ -2027,7 +2027,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
             return Collections.emptyList();
         }
 
-        ArrayList<SRTaskStatus> candidates = new ArrayList<SRTaskStatus>(tasks.length * 2);
+        ArrayList<STTaskStatus> candidates = new ArrayList<STTaskStatus>(tasks.length * 2);
         final long now = System.currentTimeMillis();
 
         if (speculateMap) {
@@ -2052,7 +2052,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
         }
 
         // FIXME currently, take just one for map and another for reduce
-        ArrayList<SRTaskStatus> list = new ArrayList<SRTaskStatus>(2);
+        ArrayList<STTaskStatus> list = new ArrayList<STTaskStatus>(2);
         boolean foundMap = availMaps == 0; // otherwise, we do not have space
                                            // for a map
         boolean foundReduce = availReduces == 0; // otherwise we do not have
@@ -2060,7 +2060,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
 
         Collections.sort(candidates, new EstimatedTimeComparator(now));
 
-        for (SRTaskStatus candidate : candidates) {
+        for (STTaskStatus candidate : candidates) {
             if (candidate.getTaskID().getTaskType() == TaskType.MAP) {
                 if (!foundMap) {
                     list.add(candidate);
@@ -2078,7 +2078,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
         }
 
         if (LOG.isInfoEnabled()) {
-            for (SRTaskStatus target : list) {
+            for (STTaskStatus target : list) {
                 LOG.info("speculative execution candidate: "
                         + target.getTaskID().getTaskID() + " (expected "
                         + (target.getRemainTime(now)) + " secs)");
@@ -2089,7 +2089,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
         return list;
     }
 
-    static class EstimatedTimeComparator implements Comparator<SRTaskStatus> {
+    static class EstimatedTimeComparator implements Comparator<STTaskStatus> {
         final long now;
 
         EstimatedTimeComparator(long now) {
@@ -2097,7 +2097,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
         }
 
         @Override
-        public int compare(SRTaskStatus o1, SRTaskStatus o2) {
+        public int compare(STTaskStatus o1, STTaskStatus o2) {
             double t1 = o1.getRemainTime(now);
             double t2 = o2.getRemainTime(now);
 
@@ -2135,7 +2135,7 @@ class JobInProgress implements MRJobConfig, SkewTuneJobConfig {
      * @param completed 
      * @return true if task has canceled
      */
-    public int handleTaskHeartbeat(SRTaskStatus status, String host, BitSet completed) {
+    public int handleTaskHeartbeat(STTaskStatus status, String host, BitSet completed) {
         TaskInProgress tip = getTaskInProgress(status.getTaskID());
         boolean firstReport = tip.neverScheduled();
         boolean isMap = tip.getTaskType() == TaskType.MAP;
