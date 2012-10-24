@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+<!-- For further information, please refer following web site:
+     https://code.google.com/p/skewtune/wiki/SkewTuneConfiguration --> 
+
+<configuration>
+
+<property>
+    <name>skewtune.jobtracker.address</name>
+    <value>0.0.0.0:60000</value>
+    <description>Network address of SkewTune JobTracker. Replace 0.0.0.0 with the real IP address.</description>
+</property>
+
+</configuration>
