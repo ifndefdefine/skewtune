@@ -24,8 +24,8 @@ function print_usage(){
   echo "Usage: skewtune [--config confdir] COMMAND"
   echo "       where COMMAND is one of:"
 #  echo "  mradmin              run a Map-Reduce admin client"
-  echo "  jobtracker           run the SkewTune Job Tracker node" 
-  echo "  tasktracker          run a SkewTune Task Tracker node" 
+  echo "  stjobtracker           run the SkewTune Job Tracker node" 
+  echo "  sttasktracker          run a SkewTune Task Tracker node" 
 #  echo "  pipes                run a Pipes job"
   echo "  job                  manipulate SkewTune jobs"
 #  echo "  queue                get information regarding JobQueues"
@@ -44,10 +44,10 @@ shift
 if [ "$COMMAND" = "mradmin" ] ; then
   CLASS=org.apache.hadoop.mapred.tools.MRAdmin
   HADOOP_OPTS="$HADOOP_OPTS $HADOOP_CLIENT_OPTS"
-elif [ "$COMMAND" = "jobtracker" ] ; then
+elif [ "$COMMAND" = "stjobtracker" ] ; then
   CLASS=skewtune.mapreduce.SR2JobTracker
   HADOOP_OPTS="$HADOOP_OPTS $HADOOP_JOBTRACKER_OPTS $SKEWREDUCE_JT_OPTS"
-elif [ "$COMMAND" = "tasktracker" ] ; then
+elif [ "$COMMAND" = "sttasktracker" ] ; then
   CLASS=skewtune.mapreduce.SR2TaskTracker
   HADOOP_OPTS="$HADOOP_OPTS $HADOOP_TASKTRACKER_OPTS $SKEWREDUCE_TT_OPTS"
 elif [ "$COMMAND" = "job" ] ; then

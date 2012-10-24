@@ -25,5 +25,5 @@ bin=`cd "$bin"; pwd`
 
 # start mapred daemons
 # start jobtracker first to minimize connection errors at startup
-"$HADOOP_COMMON_HOME"/bin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script "$bin"/skewtune start jobtracker
-"$HADOOP_COMMON_HOME"/bin/hadoop-daemons.sh --config $HADOOP_CONF_DIR --script "$bin"/skewtune start tasktracker
+"$HADOOP_COMMON_HOME"/bin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script "$bin"/skewtune start stjobtracker
+"$HADOOP_COMMON_HOME"/bin/hadoop-daemons.sh --config $HADOOP_CONF_DIR --script "$bin"/skewtune start sttasktracker
